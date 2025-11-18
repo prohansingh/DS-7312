@@ -1,0 +1,78 @@
+20-08-2025
+Matrix
+> mat<-matrix(1:9,nrow=3)
+> print("Original Matrix:")
+[1] "Original Matrix:"
+> print(mat)
+     [,1] [,2] [,3]
+[1,]    1    4    7
+[2,]    2    5    8
+[3,]    3    6    9
+> row_sum<-apply(mat,1,sum)
+> print("Rows sum:")
+[1] "Rows sum:"
+> print(row_sum)
+[1] 12 15 18
+> num_list<-list(a=1,b=2,c=3)
+> print("Num list")
+[1] "Num list"
+> print(num_list)
+$a
+[1] 1
+
+$b
+[1] 2
+
+$c
+[1] 3
+> l=list("Apple","Grapes",100,2)
+> print(l)
+[[1]]
+[1] "Apple"
+
+[[2]]
+[1] "Grapes"
+
+[[3]]
+[1] 100
+
+[[4]]
+[1] 2
+
+5. Prepare the data sets - reading and uploading the CSV files from URL on the local drive upload and download (working with IRIS, MTCARS and TITANIC datasets)
+TXT File
+> my_data=read.table("D:\7312\names.txt",header=FALSE,sep="\t")
+Error: \731 exceeds maximum allowed octal value \377 (<input>:1:26)
+> print(my_data)
+            V1
+1         Name
+2      John 10
+3     Henry 20
+4 Spiderman 30
+CSV FILE
+> cars_csv=read.csv("D:/7312/Cars.csv",header=TRUE,sep=",")
+> print(cars_csv)
+       Car Rating
+1 BMW           1
+2 Toyota        5
+3 Benz          2
+URL File
+>link="https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv"
+> a=read.csv(link,header=FALSE,sep=",")
+
+
+> print(head(a))
+        V1     V2                                                 V3     V4  V5
+1 Survived Pclass                                               Name    Sex Age
+2        0      3                             Mr. Owen Harris Braund   male  22
+3        1      1 Mrs. John Bradley (Florence Briggs Thayer) Cumings female  38
+4        1      3                              Miss. Laina Heikkinen female  26
+5        1      1        Mrs. Jacques Heath (Lily May Peel) Futrelle female  35
+6        0      3                            Mr. William Henry Allen   male  35
+                       V6                      V7      V8
+1 Siblings/Spouses Aboard Parents/Children Aboard    Fare
+2                       1                       0    7.25
+3                       1                       0 71.2833
+4                       0                       0   7.925
+5                       1                       0    53.1
+6                       0                       0    8.05
