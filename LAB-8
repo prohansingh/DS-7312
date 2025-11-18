@@ -1,0 +1,97 @@
+15) Implement KNN classification on any of the data set.
+
+> library(class)
+Connected to your session in progress, last started 2025-Nov-14 03:52:52 UTC (17 minutes ago)
+> library(class)
+> data<-data.frame(Height=c(5.0,5.5,5.8,6.0,5.2)
++                 ,Weight=c(50,60,65,70,55),
++                 class=c("A","A","B","B","A"))
+> train_data<-data[,c("Height","Weight")]
+> train_labels<-data$class
+> test_data<-data.frame(Height=5.7,Weight=63)
+> pred<-knn(train_data,test=test_data,cl=train_labels,k=3)
+> print(pred)
+[1] B
+Levels: A B
+
+
+16) Apply KNN regression on any data set
+> install.packages("FNN")
+
+Installing package into ‘/cloud/lib/x86_64-pc-linux-gnu-library/4.5’
+(as ‘lib’ is unspecified)
+trying URL 'http://rspm/default/__linux__/focal/latest/src/contrib/FNN_1.1.4.1.tar.gz'
+Content type 'application/x-gzip' length 126024 bytes (123 KB)
+==================================================
+downloaded 123 KB
+
+* installing *binary* package ‘FNN’ ...
+* DONE (FNN)
+
+The downloaded source packages are in
+	‘/tmp/Rtmpk2XWTd/downloaded_packages’
+> library(FNN)
+
+
+Attaching package: ‘FNN’
+
+The following objects are masked from ‘package:class’:
+
+    knn, knn.cv
+> data<-data.frame(
++    Height=c(5.0,5.5,5.8,6.0,5.2),
++    Weight=c(50,60,65,70,55),
++    Score=c(80,85,90,95,82)
++ )
+> train_data<-data[,c("Height","Weight")]
+> train_target<-data$Score
+> Test_data<-data.frame(Height=5.7,Weight=63)
+> pred<-knn.reg(train=train_data,test=Test_data,y=train_target,k=3)
+> print(pred$pred)
+[1] 90
+
+17) Apply k-means clustering algorithm on any data set
+> library(ggplot2)
+> set.seed(123)
+> data<-data.frame(
++    x=c(rnorm(50,2,0.5),rnorm(50,5,0.5)),
++    y=c(rnorm(50,3,0.5),rnorm(50,6,0.5))
++ )
+> kmeans_result<-kmeans(data,centers=2)
+> data$cluster<-as.factor(kmeans_result$cluster)
+> ggplot(data,aes(x,y,color=cluster))+
++    geom_point(size=3)+
++    labs(title="K-means clustering visualozation",
++         x="Feature X",
++         y="Feature Y")+
++    theme_minimal()
+
+
+18) Write a R script to find the elements in the list which is not there in another list
+> list1<-c(1,2,3,4,5)
+> list2<-c(3,4,6,7)
+> result<-setdiff(list1,list2)
+> print("Elements in list1 that are not in test2:")
+[1] "Elements in list1 that are not in test2:"
+> print(result)
+[1] 1 2 5
+
+19) Write a R script to implement mosaicpplot() on any data frame.
+
+> data<-table(
++    Gender=c("M","M","F","F","M","F"),
++    Response=c("yes","no","yes","no","yes","no")
++ )
+
+> mosaicplot(data,main="Mosaicplot of Genders vs response",color=TRUE)
+ 
+
+20) Implement stripchart() on any of the data set
+> values<-c(10,12,15,18,21,22,23,25,26)
+> stripchart(values,main="Stripchart Example",
++           method="stack",color="blue",pch=16)
+> set.seed(100)
+> data<-rnorm(50,mean=5,sd=2)
+> qqnorm(data,main="QQ plot of normal data")
+> qqline(data,col="red")
+
