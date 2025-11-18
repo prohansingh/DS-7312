@@ -1,0 +1,156 @@
+Logistics Regression:
+#Create a dataset(Heart patients)
+> heart_data<-data.frame(Age=c(25,30,35,40,45,50,55,60,65,70),
++ Cholesterol=c(180,190,200,210,220,230,250,260,280,300),
++ Heart_disease=c(0,0,0,0,1,1,1,1,1,1))
+> heart_data
+   Age Cholesterol Heart_disease
+1   25         180             0
+2   30         190             0
+3   35         200             0
+4   40         210             0
+5   45         220             1
+6   50         230             1
+7   55         250             1
+8   60         260             1
+9   65         280             1
+10  70         300             1
+> #build model
+
+> model<-glm(Heart_disease~Age+Cholesterol,data=heart_data,family=binomial)
+Warning message:
+glm.fit: fitted probabilities numerically 0 or 1 occurred 
+> summary(model)
+
+Call:
+glm(formula = Heart_disease ~ Age + Cholesterol, family = binomial, 
+    data = heart_data)
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)
+(Intercept)  6.013e+02  1.682e+06       0        1
+Age          2.459e+01  5.444e+04       0        1
+Cholesterol -7.657e+00  1.835e+04       0        1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1.3460e+01  on 9  degrees of freedom
+Residual deviance: 3.5993e-10  on 7  degrees of freedom
+AIC: 6
+
+Number of Fisher Scoring iterations: 25
+
+> #make predictions
+> predicted_probs<-predict(model,type="response")
+> predicted_class<-ifelse(predicted_probs>0.5,1,0)
+> #combine actual & predicted
+> results<-cbind(heart_data,predicted_prob=round(predicted_probs,2),predicted_class=predicted_class)
+> print("Predictions:")
+[1] "Predictions:"
+> print(results)
+   Age Cholesterol Heart_disease predicted_prob predicted_class
+1   25         180             0              0               0
+2   30         190             0              0               0
+3   35         200             0              0               0
+4   40         210             0              0               0
+5   45         220             1              1               1
+6   50         230             1              1               1
+7   55         250             1              1               1
+8   60         260             1              1               1
+9   65         280             1              1               1
+10  70         300             1              1               1
+#Accuracy
+> accuracy<-mean(results$Heart_disease==results$predicted_class)
+> cat("Model Accuracy:",accuracy,"\n")
+Model Accuracy: 1 
+
+#Visualization Results
+> library(ggplot2)
+> ggplot(results,aes(x=Age,y=predicted_prob), color=as.factor(Heart_disease))+
++ geom_point(size=3)+
++ geom_line(aes(y=predicted_prob,color="blue"))+
++ ggtitle("Logistic Regression: Probability of Heart Disease vs Age")+
++ xlab("Age(years)")+
++ ylab("Predicted Probability")+
++ theme_minimal()
+
+
+
+2) # Creating dataset(Banking and Finance):
+> loan<-data.frame(Cust_ID=c(101,102,103,104,105,106,107,108,109,110),
++                       Cibil=c(880,700,950,690,780,900,180,190,200,210),
++                       Loan_sanction=c(1,1,1,1,1,1,0,0,0,0))
+> 
+> loan
+   Cust_ID Cibil Loan_sanction
+1      101   880             1
+2      102   700             1
+3      103   950             1
+4      104   690             1
+5      105   780             1
+6      106   900             1
+7      107   180             0
+8      108   190             0
+9      109   200             0
+10     110   210             0
+> model<-glm(Loan_sanction~Cust_ID + Cibil, data=loan,family=binomial)
+
+Warning message:
+glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+> summary(model)
+
+Call:
+glm(formula = Loan_sanction ~ Cust_ID + Cibil, family = binomial, 
+    data = loan)
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)
+(Intercept)  1.273e+02  9.121e+06       0        1
+Cust_ID     -1.560e+00  8.361e+04       0        1
+Cibil        8.430e-02  6.561e+02       0        1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1.3460e+01  on 9  degrees of freedom
+Residual deviance: 2.5186e-10  on 7  degrees of freedom
+AIC: 6
+
+Number of Fisher Scoring iterations: 24
+
+> predicted_probts<-predict(model,type="response")
+> 
+> predicted_class<-ifelse(predicted_probts>0.5,1,0)
+> results<-cbind(loan,predicted_prob=round(predicted_probts,2),predicted_class=predicted_class)
+> 
+> print("Predictions:")
+[1] "Predictions:"
+> print(results)
+   Cust_ID Cibil Loan_sanction predicted_prob predicted_class
+1      101   880             1              1               1
+2      102   700             1              1               1
+3      103   950             1              1               1
+4      104   690             1              1               1
+5      105   780             1              1               1
+6      106   900             1              1               1
+7      107   180             0              0               0
+8      108   190             0              0               0
+9      109   200             0              0               0
+10     110   210             0              0               0
+> 
+> accuracy<-mean(results$Loan_sanction==results$predicted_class)
+> 
+> cat("Model Accuracy:",accuracy,"\n")
+Model Accuracy: 1 
+> 
+> library(ggplot2)
+> ggplot(results,aes(x=Cust_ID,y=predicted_prob), color=as.factor(Loan_sanction))+
++    geom_point(size=3)+
++    geom_line(aes(y=predicted_prob,color="red"))+
++    ggtitle("Logistic Regression: Probability of Loan_Sanction vs Customer_ID")+
++    xlab("Cust_ID")+
++    ylab("Predicted Probability")+
++    theme_minimal()
+
+
+
