@@ -1,0 +1,406 @@
+10-10-2025
+
+TRAINING AND SPLIT
+> n <- nrow(mtcars)
+
+> train_indices <- sample(1:n, size = 0.8 * n)
+
+> train_data <- mtcars[train_indices, ]
+> test_data <- mtcars[-train_indices, ]
+
+
+> model <- lm(mpg ~ ., data = train_data)
+> summary(model)
+OUTPUT:
+Call:
+lm(formula = mpg ~ ., data = train_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.8077 -1.8265  0.1256  1.5246  4.0015 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)
+(Intercept) 17.849266  23.312556   0.766    0.457
+cyl         -0.346903   1.465540  -0.237    0.816
+disp         0.007627   0.021248   0.359    0.725
+hp          -0.019015   0.027815  -0.684    0.505
+drat         0.380718   2.029641   0.188    0.854
+wt          -3.087652   2.446946  -1.262    0.228
+qsec         0.691412   0.894456   0.773    0.452
+vs          -1.027621   3.594371  -0.286    0.779
+am           3.198493   2.793243   1.145    0.271
+gear         0.779146   2.039956   0.382    0.708
+carb        -0.616484   1.138591  -0.541    0.597
+
+Residual standard error: 2.938 on 14 degrees of freedom
+Multiple R-squared:  0.882,     Adjusted R-squared:  0.7978 
+F-statistic: 10.47 on 10 and 14 DF,  p-value: 6.791e-05
+
+> predictions <- predict(model, newdata = test_data)
+> 
+> # Root Mean Square Error
+> actuals <- test_data$mpg
+> rmse <- sqrt(mean((predictions - actuals)^2))
+> print(paste("RMSE:", round(rmse, 2)))
+[1] "RMSE: 2.43"
+
+8. Perform the following data transformation operations on any of the data sets (IRIS, MTCARS and TITANIC datasets)
+
+a. Creating new columns b. Sorting c. Merging and joining d. Aggregation and grouping e. Exporting data
+CREATING NEW COLUMNS
+> data(mtcars)
+> # Create new columns
+> mtcars$hp_per_cyl <- mtcars$hp / mtcars$cyl
+> mtcars$mpg_level <- ifelse(mtcars$mpg > 20, "High", "Low")
+> # View the updated data
+> head(mtcars)
+                   mpg cyl disp  hp drat    wt  qsec vs am gear carb hp_per_cyl mpg_level
+Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4   18.33333      High
+Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4   18.33333      High
+Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1   23.25000      High
+Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1   18.33333      High
+Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2   21.87500       Low
+Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1   17.50000       Low
+
+
+
+
+SORTING
+acending
+> sorted_mtcars <- mtcars[order(mtcars$mpg,mtcars$cyl,mtcars$hp), ]
+> head(sorted_mtcars)
+                     mpg cyl disp  hp drat    wt  qsec vs am gear carb hp_per_cyl mpg_level
+Cadillac Fleetwood  10.4   8  472 205 2.93 5.250 17.98  0  0    3    4     25.625       Low
+Lincoln Continental 10.4   8  460 215 3.00 5.424 17.82  0  0    3    4     26.875       Low
+Camaro Z28          13.3   8  350 245 3.73 3.840 15.41  0  0    3    4     30.625       Low
+Duster 360          14.3   8  360 245 3.21 3.570 15.84  0  0    3    4     30.625       Low
+Chrysler Imperial   14.7   8  440 230 3.23 5.345 17.42  0  0    3    4     28.750       Low
+Maserati Bora       15.0   8  301 335 3.54 3.570 14.60  0  1    5    8     41.875       Low
+
+descending
+> sorted_mtcars <- mtcars[order(-mtcars$mpg), ]
+> head(sorted_mtcars)
+                mpg cyl  disp  hp drat    wt  qsec vs am gear carb hp_per_cyl mpg_level
+Toyota Corolla 33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1      16.25      High
+Fiat 128       32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1      16.50      High
+Honda Civic    30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2      13.00      High
+Lotus Europa   30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2      28.25      High
+Fiat X1-9      27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1      16.50      High
+Porsche 914-2  26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2      22.75      High
+
+creating dataframe
+> df1 <- mtcars[, c("mpg", "cyl")]
+> df1$model <- rownames(mtcars)
+
+> df2 <- mtcars[, c("hp", "gear")]
+> df2$model <- rownames(mtcars)
+
+> df2 <- df2[1:20, ]
+
+inner merge
+> merged_inner <- merge(df1, df2, by = "model")
+> head(merged_inner)
+               model  mpg cyl  hp gear
+1 Cadillac Fleetwood 10.4   8 205    3
+2  Chrysler Imperial 14.7   8 230    3
+3         Datsun 710 22.8   4  93    4
+4         Duster 360 14.3   8 245    3
+5           Fiat 128 32.4   4  66    4
+6        Honda Civic 30.4   4  52    4
+left merge
+> merged_left <- merge(df1, df2, by = "model", all.x = TRUE)
+> head(merged_left)
+               model  mpg cyl  hp gear
+1        AMC Javelin 15.2   8  NA   NA
+2 Cadillac Fleetwood 10.4   8 205    3
+3         Camaro Z28 13.3   8  NA   NA
+4  Chrysler Imperial 14.7   8 230    3
+5         Datsun 710 22.8   4  93    4
+6   Dodge Challenger 15.5   8  NA   NA
+
+full merge
+> merged_full <- merge(df1, df2, by = "model", all = TRUE)
+> head(merged_full)
+               model  mpg cyl  hp gear
+1        AMC Javelin 15.2   8  NA   NA
+2 Cadillac Fleetwood 10.4   8 205    3
+3         Camaro Z28 13.3   8  NA   NA
+4  Chrysler Imperial 14.7   8 230    3
+5         Datsun 710 22.8   4  93    4
+6   Dodge Challenger 15.5   8  NA   NA
+
+joining
+inner join
+> library(dplyr)
+ 
+> inner_joined <- inner_join(df1, df2, by = "model")
+> head(inner_joined)
+   mpg cyl             model  hp gear
+1 21.0   6         Mazda RX4 110    4
+2 21.0   6     Mazda RX4 Wag 110    4
+3 22.8   4        Datsun 710  93    4
+4 21.4   6    Hornet 4 Drive 110    3
+5 18.7   8 Hornet Sportabout 175    3
+6 18.1   6           Valiant 105    3
+left join
+> left_joined <- left_join(df1, df2, by = "model")
+> head(left_joined)
+   mpg cyl             model  hp gear
+1 21.0   6         Mazda RX4 110    4
+2 21.0   6     Mazda RX4 Wag 110    4
+3 22.8   4        Datsun 710  93    4
+4 21.4   6    Hornet 4 Drive 110    3
+5 18.7   8 Hornet Sportabout 175    3
+6 18.1   6           Valiant 105    3
+full join
+> full_joined <- full_join(df1, df2, by = "model")
+> head(full_joined)
+   mpg cyl             model  hp gear
+1 21.0   6         Mazda RX4 110    4
+2 21.0   6     Mazda RX4 Wag 110    4
+3 22.8   4        Datsun 710  93    4
+4 21.4   6    Hornet 4 Drive 110    3
+5 18.7   8 Hornet Sportabout 175    3
+6 18.1   6           Valiant 105    3
+
+AGGREGATION AND GROUPING
+using aggregate()
+> aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+  cyl      mpg
+1   4 26.66364
+2   6 19.74286
+3   8 15.10000
+using tapply()
+> tapply(mtcars$mpg, mtcars$cyl, mean)
+       4        6        8 
+26.66364 19.74286 15.10000 
+
+using by() function
+> by(mtcars$mpg, mtcars$cyl, mean)
+mtcars$cyl: 4
+[1] 26.66364
+
+mtcars$cyl: 6
+[1] 19.74286
+
+mtcars$cyl: 8
+[1] 15.1
+
+EXPORTING DATA
+csv
+> data("mtcars")
+> # Write data to txt file: tab separated values
+> # sep = "\t"
+> write.table(mtcars, file = "mtcars.txt", sep = "\t",
++             row.names = TRUE, col.names = NA)
+> # Write data to csv files:  
+> # decimal point = "." and value separators = comma (",")
+> write.csv(mtcars, file = "mtcars.csv")
+> # Write data to csv files: 
+> # decimal point = comma (",") and value separators = semicolon (";")
+> write.csv2(mtcars, file = "mtcars.csv")
+output will it creates one mtcars and display the content in it
+
+excel file
+> install.packages("openxlsx")
+
+> library(openxlsx)
+> write.xlsx(sorted_mtcars,"sorted_mtcars.xlsx")
+> cat("Excel file has been saved as 'sorted_mtcars.xlsx'.")
+Excel file has been saved as 'sorted_mtcars.xlsx'.
+
+9. Implement EDA operations on any of the data sets (IRIS, MTCARS and TITANIC datasets)
+
+a. Sum of missing values b. Standard deviations c. Covariance d. Correlations e. Skewness f. Kurtosis
+EDA Operations
+MTCARS
+> data("mtcars")
+> df<-mtcars
+> install.packages("moments")
+
+Installing package into ‘/cloud/lib/x86_64-pc-linux-gnu-library/4.5’
+(as ‘lib’ is unspecified)
+trying URL 'http://rspm/default/__linux__/focal/latest/src/contrib/moments_0.14.1.tar.gz'
+Content type 'application/x-gzip' length 54330 bytes (53 KB)
+==================================================
+downloaded 53 KB
+
+* installing *binary* package ‘moments’ ...
+* DONE (moments)
+
+Sum of Missing Values
+> library(moments)
+> cat("a) Missing Values:\n")
+
+> print(colSums(is.na(df)))
+a) Missing Values:
+ mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
+   0    0    0    0    0    0    0    0    0    0    0 
+
+Standard Deviation
+> cat("\nb) Standard Deviation:\n")
+> print(sapply(df, sd))
+
+b) Standard Deviation:
+        mpg         cyl        disp          hp        drat          wt        qsec          vs          am 
+  6.0269481   1.7859216 123.9386938  68.5628685   0.5346787   0.9784574   1.7869432   0.5040161   0.4989909 
+       gear        carb 
+  0.7378041   1.6152000
+Covariance
+> cat("\nc) Covariance Matrix:\n")
+
+> print(cov(df))
+c) Covariance Matrix:
+             mpg         cyl        disp          hp         drat          wt         qsec           vs
+mpg    36.324103  -9.1723790  -633.09721 -320.732056   2.19506351  -5.1166847   4.50914919   2.01713710
+cyl    -9.172379   3.1895161   199.66028  101.931452  -0.66836694   1.3673710  -1.88685484  -0.72983871
+disp -633.097208 199.6602823 15360.79983 6721.158669 -47.06401915 107.6842040 -96.05168145 -44.37762097
+hp   -320.732056 101.9314516  6721.15867 4700.866935 -16.45110887  44.1926613 -86.77008065 -24.98790323
+drat    2.195064  -0.6683669   -47.06402  -16.451109   0.28588135  -0.3727207   0.08714073   0.11864919
+wt     -5.116685   1.3673710   107.68420   44.192661  -0.37272073   0.9573790  -0.30548161  -0.27366129
+qsec    4.509149  -1.8868548   -96.05168  -86.770081   0.08714073  -0.3054816   3.19316613   0.67056452
+vs      2.017137  -0.7298387   -44.37762  -24.987903   0.11864919  -0.2736613   0.67056452   0.25403226
+am      1.803931  -0.4657258   -36.56401   -8.320565   0.19015121  -0.3381048  -0.20495968   0.04233871
+gear    2.135685  -0.6491935   -50.80262   -6.358871   0.27598790  -0.4210806  -0.28040323   0.07661290
+carb   -5.363105   1.5201613    79.06875   83.036290  -0.07840726   0.6757903  -1.89411290  -0.46370968
+               am        gear        carb
+mpg    1.80393145   2.1356855 -5.36310484
+cyl   -0.46572581  -0.6491935  1.52016129
+disp -36.56401210 -50.8026210 79.06875000
+hp    -8.32056452  -6.3588710 83.03629032
+drat   0.19015121   0.2759879 -0.07840726
+wt    -0.33810484  -0.4210806  0.67579032
+qsec  -0.20495968  -0.2804032 -1.89411290
+vs     0.04233871   0.0766129 -0.46370968
+am     0.24899194   0.2923387  0.04637097
+gear   0.29233871   0.5443548  0.32661290
+carb   0.04637097   0.3266129  2.60887097
+Correlation:
+> cat("\nd) Correlation Matrix:\n")
+ 
+> print(cor(df))
+d) Correlation Matrix:
+            mpg        cyl       disp         hp        drat         wt        qsec         vs          am
+mpg   1.0000000 -0.8521620 -0.8475514 -0.7761684  0.68117191 -0.8676594  0.41868403  0.6640389  0.59983243
+cyl  -0.8521620  1.0000000  0.9020329  0.8324475 -0.69993811  0.7824958 -0.59124207 -0.8108118 -0.52260705
+disp -0.8475514  0.9020329  1.0000000  0.7909486 -0.71021393  0.8879799 -0.43369788 -0.7104159 -0.59122704
+hp   -0.7761684  0.8324475  0.7909486  1.0000000 -0.44875912  0.6587479 -0.70822339 -0.7230967 -0.24320426
+drat  0.6811719 -0.6999381 -0.7102139 -0.4487591  1.00000000 -0.7124406  0.09120476  0.4402785  0.71271113
+wt   -0.8676594  0.7824958  0.8879799  0.6587479 -0.71244065  1.0000000 -0.17471588 -0.5549157 -0.69249526
+qsec  0.4186840 -0.5912421 -0.4336979 -0.7082234  0.09120476 -0.1747159  1.00000000  0.7445354 -0.22986086
+vs    0.6640389 -0.8108118 -0.7104159 -0.7230967  0.44027846 -0.5549157  0.74453544  1.0000000  0.16834512
+am    0.5998324 -0.5226070 -0.5912270 -0.2432043  0.71271113 -0.6924953 -0.22986086  0.1683451  1.00000000
+gear  0.4802848 -0.4926866 -0.5555692 -0.1257043  0.69961013 -0.5832870 -0.21268223  0.2060233  0.79405876
+carb -0.5509251  0.5269883  0.3949769  0.7498125 -0.09078980  0.4276059 -0.65624923 -0.5696071  0.05753435
+           gear        carb
+mpg   0.4802848 -0.55092507
+cyl  -0.4926866  0.52698829
+disp -0.5555692  0.39497686
+hp   -0.1257043  0.74981247
+drat  0.6996101 -0.09078980
+wt   -0.5832870  0.42760594
+qsec -0.2126822 -0.65624923
+vs    0.2060233 -0.56960714
+am    0.7940588  0.05753435
+gear  1.0000000  0.27407284
+carb  0.2740728  1.00000000
+Skewness
+> cat("\ne) Skewness:\n")
+ 
+> print(sapply(df, skewness))
+e) Skewness:
+       mpg        cyl       disp         hp       drat         wt       qsec         vs         am       gear 
+ 0.6404399 -0.1831287  0.4002724  0.7614356  0.2788734  0.4437855  0.3870456  0.2519763  0.3817709  0.5546495 
+      carb 
+ 1.1021304 
+kurtosis
+> cat("\nf) Kurtosis:\n")
+
+> print(sapply(df, kurtosis))
+f) Kurtosis:
+     mpg      cyl     disp       hp     drat       wt     qsec       vs       am     gear     carb 
+2.799467 1.319032 1.910317 3.052233 2.435116 3.172471 3.553753 1.063492 1.145749 2.056790 4.536121 
+10. Perform the following visualization operations on any of the vectors using ggplot2 library
+
+a. Scattered graph b. Line graph c. Bar plot d. Line and Scattered plot graph e. Box plot f. Histogram g. Pie chart h. Strip chart i. Frequency polygon
+Visualization Operations :
+
+ Scattered Plot:
+>  library(ggplot2)
+> 
+>  x <- 1:10
+> y <- c(3, 5, 6, 7, 8, 10, 12, 14, 15, 18)
+> df <- data.frame(x, y)
+> ggplot(df, aes(x = x, y = y)) +
++ geom_point(color = "red", size = 3) +
++ ggtitle("Scatter Plot") +
++ xlab("X values") + ylab("Y values")
+
+Line Graph
+> x <- 1:10
+>  y <- c(2, 4, 6, 8, 10, 9, 7, 5, 3, 1)
+> df <- data.frame(x, y)
+> ggplot(df, aes(x = x, y = y)) +
++ geom_line(color = "purple", linewidth = 1.2) +
++ ggtitle("Line Graph")
+
+
+
+Bar Plot
+> library(ggplot2)
+> 
+> categories <- c("A", "B", "C", "D", "E")
+> values <- c(5, 7, 9, 4, 6)
+> df <- data.frame(categories, values)
+> 
+> ggplot(df, aes(x = categories, y = values, fill = categories)) +
++    geom_bar(stat = "identity") +
++    ggtitle("Bar Plot")
+
+
+
+
+Line and Scattered Plot Graph: 
+> x <- 1:10
+> y <- c(3, 5, 7, 9, 11, 10, 8, 6, 4, 2)
+> df <- data.frame(x, y)
+> ggplot(df, aes(x = x, y = y)) +
++ geom_line(color = "orange", linewidth = 1) +
++  geom_point(color = "blue", size = 3) +
++ ggtitle("Line and Scatter Plot")
+ 
+
+Box Plot
+> library(ggplot2)
+> values <- c(10, 12, 15, 18, 12, 20, 25, 22, 18, 16)
+> values <- c(10, 12, 16, 18, 12, 20, 25, 20, 18, 16)
+> df <- data.frame(values)
+> ggplot(df, aes(y = values)) +
++ geom_boxplot(fill = "red") +
++ ggtitle("Box Plot")
+
+
+Histogram
+> library(ggplot2)
+> values <- rnorm(100, mean = 50, sd = 10)
+> df <- data.frame(values)
+> ggplot(df, aes(x = values)) +
++ geom_histogram(binwidth = 5, fill = "blue", color = "black") +
++ ggtitle("Histogram")
+
+
+Pie Chart: 
+
+> library(ggplot2)
+> 
+> categories <- c("Apple", "Banana", "Cherry", "Date")
+> values <- c(30, 20, 35, 15)
+> df <- data.frame(categories, values)
+> 
+> ggplot(df, aes(x = "", y = values, fill = categories)) +
++    geom_bar(stat = "identity", width = 1) +
++    coord_polar("y", start = 0) +
++    ggtitle("Pie Chart"
+
+
